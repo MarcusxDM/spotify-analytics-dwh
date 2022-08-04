@@ -145,9 +145,7 @@ songs_table_create = (
     );
 """)
 
-"""
-Must execute before 
-"""
+
 artists_table_insert = (
     """
     INSERT INTO dim_artists (
@@ -262,22 +260,18 @@ stream_quality_check = """SELECT COUNT(stream_id)
                         WHERE stream_id IS NULL;"""
 
 # QUERY LISTS
-
-
 create_table_queries = [staging_artist_table_create, staging_chart_table_create, staging_country_table_create,
                         artist_table_create, charts_table_create, songs_table_create, calendar_table_create, streams_table_create]
 
 copy_table_queries = [copy_artists_table_staging, copy_charts_table_staging]
 
-#  staging_artist_table_drop, staging_chart_table_drop, 
-drop_table_queries = [streams_table_drop, artist_table_drop, chart_table_drop,
+drop_table_queries = [staging_artist_table_drop, staging_chart_table_drop, streams_table_drop, artist_table_drop, chart_table_drop,
                      songs_table_drop, calendar_table_drop]
-
-#     
+   
 insert_table_queries = [calendar_table_insert, charts_table_insert, songs_table_insert, artists_table_insert, streams_table_insert]
 
-data_quality_checks = [{'sql':artist_quality_check  , 'expected_type':'number', 'expected_result':0},
-                    {'sql':song_quality_check  , 'expected_type':'number', 'expected_result':0},
-                    {'sql':chart_quality_check  , 'expected_type':'number', 'expected_result':0},
-                    {'sql':calendar_quality_check  , 'expected_type':'number', 'expected_result':0},
-                    {'sql':stream_quality_check  , 'expected_type':'number', 'expected_result':0}]
+data_quality_checks = [{'sql':artist_quality_check  , 'expected_result':0},
+                    {'sql':song_quality_check  , 'expected_result':0},
+                    {'sql':chart_quality_check  , 'expected_result':0},
+                    {'sql':calendar_quality_check  , 'expected_result':0},
+                    {'sql':stream_quality_check  , 'expected_result':0}]
