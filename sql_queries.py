@@ -61,7 +61,7 @@ staging_chart_table_create = ("""
 
 copy_artists_table_staging = (
     """COPY staging_artists
-        FROM {0}
+        FROM '{0}'
         DELIMITER ','
         CSV 
         HEADER;
@@ -69,7 +69,7 @@ copy_artists_table_staging = (
 
 copy_charts_table_staging = (
     """COPY staging_charts
-        FROM {0}
+        FROM '{0}'
         DELIMITER ','
         CSV 
         HEADER;
