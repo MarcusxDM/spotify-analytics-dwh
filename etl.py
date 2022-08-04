@@ -40,7 +40,11 @@ def insert_tables(cur, conn):
 def check_data_quality(cur):
     for check in data_quality_checks:
         cur.execute(check['sql'])
-        # TODO result = 
+        result = cur.fetchone()[0]
+        if result == check['expected_result']:
+            print("Data Quality OK")
+        else:
+            print("Data Quality ERROR")
 
 def main():
     config = configparser.ConfigParser()
@@ -52,7 +56,8 @@ def main():
     load_staging_json(cur, conn, config['SOURCE']['CONTINENT'], config['SOURCE']['COUNTRY'])
     load_staging_tables(cur, conn)
     insert_tables(cur, conn)
-
+    check_data_quality(cur)
+    
     conn.close()
 
 
