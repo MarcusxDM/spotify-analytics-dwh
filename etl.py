@@ -82,10 +82,16 @@ def check_data_quality(cur):
         i+=1
         cur.execute(check['sql'])
         result = cur.fetchone()[0]
-        if result == check['expected_result']:
+        if check['type'] == 'query':
+            cur.execute(check['expected_result'])
+            expected_result = cur.fetchone()[0]
+        else:
+            expected_result = check['expected_result']
+        if result == expected_result:
             print(f"#{i} Data Quality OK")
         else:
             print(f"#{i} Data Quality ERROR")
+            
 
 def main():
     '''
@@ -103,8 +109,8 @@ def main():
     conn = psycopg2.connect("host={} dbname={} user={} password={} port={}".format(*config['DB'].values()))
     cur = conn.cursor()
     
-    # load_staging_json(cur, conn, config['SOURCE']['CONTINENT'], config['SOURCE']['COUNTRY'])
-    # load_staging_tables(cur, conn)
+    load_staging_json(cur, conn, config['SOURCE']['CONTINENT'], config['SOURCE']['COUNTRY'])
+    load_staging_tables(cur, conn)
     insert_tables(cur, conn)
     check_data_quality(cur)
 

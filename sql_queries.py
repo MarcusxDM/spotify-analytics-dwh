@@ -243,6 +243,7 @@ streams_table_insert = (
     """
 )
 
+# NULL check
 artist_quality_check = """SELECT COUNT(artist_id) 
                         FROM dim_artists
                         WHERE artist_id IS NULL ;"""
@@ -259,6 +260,29 @@ stream_quality_check = """SELECT COUNT(stream_id)
                         FROM fact_streams
                         WHERE stream_id IS NULL;"""
 
+# Completeness check
+fact_artist_check = '''
+                SELECT COUNT(DISTINCT artist_id) 
+                        FROM fact_streams;'''
+fact_song_check = '''
+                SELECT COUNT(DISTINCT song_id) 
+                        FROM fact_streams;'''
+fact_chart_check = '''
+                SELECT COUNT(DISTINCT chart_id) 
+                        FROM fact_streams;'''
+fact_date_check = '''
+                SELECT COUNT(DISTINCT chart_date) 
+                        FROM fact_streams;'''
+
+artist_dim_check = """SELECT COUNT(artist_id) 
+                        FROM dim_artists;"""
+song_dim_check = """SELECT COUNT(song_id) 
+                        FROM dim_songs """
+chart_dim_check = """SELECT COUNT(chart_id) 
+                        FROM dim_charts;"""
+calendar_dim_check = """SELECT COUNT(chart_date) 
+                        FROM dim_calendar;"""
+
 # QUERY LISTS
 create_table_queries = [staging_artist_table_create, staging_chart_table_create, staging_country_table_create,
                         artist_table_create, charts_table_create, songs_table_create, calendar_table_create, streams_table_create]
@@ -270,8 +294,13 @@ drop_table_queries = [staging_artist_table_drop, staging_chart_table_drop, strea
    
 insert_table_queries = [calendar_table_insert, charts_table_insert, songs_table_insert, artists_table_insert, streams_table_insert]
 
-data_quality_checks = [{'sql':artist_quality_check  , 'expected_result':0},
-                    {'sql':song_quality_check  , 'expected_result':0},
-                    {'sql':chart_quality_check  , 'expected_result':0},
-                    {'sql':calendar_quality_check  , 'expected_result':0},
-                    {'sql':stream_quality_check  , 'expected_result':0}]
+data_quality_checks = [{'sql':artist_quality_check, 'type':'constant', 'expected_result':0},
+                    {'sql':song_quality_check, 'type':'constant',  'expected_result':0},
+                    {'sql':chart_quality_check, 'type':'constant',  'expected_result':0},
+                    {'sql':calendar_quality_check, 'type':'constant',  'expected_result':0},
+                    {'sql':stream_quality_check, 'type':'constant',  'expected_result':0},
+                    
+                    {'sql':fact_artist_check, 'type':'query',  'expected_result':artist_dim_check},
+                    {'sql':fact_song_check, 'type':'query',  'expected_result':song_dim_check},
+                    {'sql':fact_chart_check, 'type':'query',  'expected_result':chart_dim_check},
+                    {'sql':fact_date_check, 'type':'query',  'expected_result':calendar_dim_check}]
